@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import Numbers from './Numbers';
 import NotificationPopup from './NotificationPopup';
@@ -118,6 +118,32 @@ const Main = () => {
     const matches2 = selectedNums2.filter(s => winningNums2.includes(s)).length;
     return matches1 >= 4 || (matches1 >= 3 && matches2 === 1)
   }
+
+  useEffect(() => {
+    if (isSubmitted) {
+      // eslint-disable-next-line no-inner-declarations
+      async function f() {
+      const settings = {
+        method: 'POST',
+        body: {
+          selectedNumber: {
+            firstField: selectedNums1,
+            secondField: selectedNums2,
+          },
+          isTicketWon: isWinner(),
+        }
+      };
+      try {
+        const fetchResponse = await fetch(`http://localhost:3001/`, settings);
+        const data = await fetchResponse.json();
+        return data;
+      } catch (e) {
+        return e;
+      }
+    }
+    f();
+    }
+  }, [isSubmitted]);
 
   return (
     <Container>
