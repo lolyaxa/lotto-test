@@ -22,7 +22,7 @@ const Numbers = (props) => {
   let numsArr = [];
   for (let i = 0; i < num; i++) {
     numsArr.push(
-      <NumContainer active={selected.find(s => s === (i + 1))} onClick={(e) => onClick(e.target.innerHTML * 1)}>
+      <NumContainer key={i + 1} active={selected.find(s => s === (i + 1))} onClick={(e) => onClick(e.target.innerHTML * 1)}>
         {i + 1}
       </NumContainer>
     );
