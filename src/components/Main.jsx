@@ -3,8 +3,10 @@ import styled from '@emotion/styled';
 import Numbers from './Numbers';
 import NotificationPopup from './NotificationPopup';
 
+// максимальное кол-во выбранных чисел
 const FIRST_SELECTED_MAX = 8;
 const SECOND_SELECTED_MAX = 1;
+// сколько всего чисел
 const FIRST_ARRAY_LENGTH = 19;
 const SECOND_ARRAY_LENGTH = 4;
 
@@ -68,6 +70,7 @@ const Button = styled.div`
 
 function getRandomArray(length, max) {
   const arr = [];
+  // условие для того, чтобы числа в массиве не повторялись
   while (arr.length !== length) {
     const num = Math.floor(Math.random() * max + 1);
     if (arr.find(n => n === num) === undefined) {
@@ -77,6 +80,7 @@ function getRandomArray(length, max) {
   return arr;
 };
 
+// создаём массивы выигрышных чисел
 const winningNums1 = getRandomArray(FIRST_SELECTED_MAX, FIRST_ARRAY_LENGTH);
 const winningNums2 = getRandomArray(SECOND_SELECTED_MAX, SECOND_ARRAY_LENGTH);
 
@@ -88,6 +92,8 @@ const Main = () => {
     const selected = variant === 1 ? selectedNums1 : selectedNums2;
     const max = variant === 1 ? FIRST_SELECTED_MAX : SECOND_SELECTED_MAX;
     const idx = selected.findIndex(s => s === value);
+    // если ещё можно добавлять числа, добавляем, а
+    // при повторном нажатии удаляем
     if (idx === -1 && selected.length < max) {
       setValue([...selected, value]);
     } else {
@@ -101,6 +107,7 @@ const Main = () => {
   };
 
   function isWinner() {
+    // кол-во вхождений чисел из выигрышного массива в массив выбранных чисел
     const matches1 = selectedNums1.filter(s => winningNums1.includes(s)).length;
     const matches2 = selectedNums2.filter(s => winningNums2.includes(s)).length;
     return matches1 >= 4 || (matches1 >= 3 && matches2 === 1)
