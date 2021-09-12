@@ -1,4 +1,4 @@
-import React, { useState, useEffect, isValidElement } from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import Numbers from './Numbers';
 import NotificationPopup from './NotificationPopup';
@@ -76,9 +76,9 @@ function getRandomArray(length, max) {
     if (arr.find(n => n === num) === undefined) {
       arr.push(num);
     }
-  };
+  }
   return arr;
-};
+}
 
 // создаём массивы выигрышных чисел
 const winningNums1 = getRandomArray(FIRST_SELECTED_MAX, FIRST_ARRAY_LENGTH);
@@ -88,6 +88,7 @@ const Main = () => {
   const [selectedNums1, setSelectedNums1] = useState([]);
   const [selectedNums2, setSelectedNums2] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
   function onNumClick(value, variant, setValue) {
     const selected = variant === 1 ? selectedNums1 : selectedNums2;
     const max = variant === 1 ? FIRST_SELECTED_MAX : SECOND_SELECTED_MAX;
@@ -99,25 +100,25 @@ const Main = () => {
     } else {
       const newSelected = selected.filter(s => s !== value);
       setValue(newSelected);
-    };
-  };
+    }
+  }
 
   function isValid() {
     return selectedNums1.length === FIRST_SELECTED_MAX && selectedNums2.length === SECOND_SELECTED_MAX;
-  };
+  }
 
   function isWinner() {
     // кол-во вхождений чисел из выигрышного массива в массив выбранных чисел
     const matches1 = selectedNums1.filter(s => winningNums1.includes(s)).length;
     const matches2 = selectedNums2.filter(s => winningNums2.includes(s)).length;
     return matches1 >= 4 || (matches1 >= 3 && matches2 === 1)
-  };
+  }
 
   return (
     <Container>
       <LottoContainer>
         <Title>
-          Гослото "8 из 19"
+          Гослото &quot;8 из 19&quot;
         </Title>
         <Subtitle>
           Первая часть поля
