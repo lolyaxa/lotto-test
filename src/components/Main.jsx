@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import Numbers from './Numbers';
 import NotificationPopup from './NotificationPopup';
+import wand from '../wand.svg';
 
 // максимальное кол-во выбранных чисел
 const FIRST_SELECTED_MAX = 8;
@@ -21,7 +22,6 @@ const LottoContainer = styled.div`
   position: absolute;
   left: 0%;
   right: 0%;
-  height: 400px;
   margin: 30px;
   background: #FFFFFF;
   border: 0.5px solid #D7D7D7;
@@ -32,7 +32,7 @@ const LottoContainer = styled.div`
   font-size: 16px;
   line-height: 1.25;
   color: rgba(0, 0, 0, 0.65);
-  padding: 5px;
+  padding: 10px;
 `;
 
 const Title = styled.div`
@@ -66,6 +66,11 @@ const Button = styled.div`
   text-align: center;
   border: 1px solid #AA00A2;
   padding: 10px;
+`;
+
+const WandIconContainer = styled.div`
+  display: inline-block;
+  float: right;
 `;
 
 function getRandomArray(length, max) {
@@ -119,6 +124,14 @@ const Main = () => {
       <LottoContainer>
         <Title>
           Гослото &quot;8 из 19&quot;
+          <WandIconContainer
+            onClick={() => {
+              setSelectedNums1(getRandomArray(FIRST_SELECTED_MAX, FIRST_ARRAY_LENGTH));
+              setSelectedNums2(getRandomArray(SECOND_SELECTED_MAX, SECOND_ARRAY_LENGTH));
+            }}
+          >
+            <img src={wand} />
+          </WandIconContainer>
         </Title>
         <Subtitle>
           Первая часть поля
