@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import Numbers from './Numbers';
 
+const FIRST_SELECTED_MAX = 8;
+const SECOND_SELECTED_MAX = 1;
+const FIRST_ARRAY = 19;
+const SECOND_ARRAY = 4;
+
 const Container = styled.div`
   background: #992667;
   width: 100%;
@@ -49,6 +54,19 @@ const Subtitle = styled.div`
 `;
 
 const Main = () => {
+  const [selectedNums1, setSelectedNums1] = useState([]);
+  const [selectedNums2, setSelectedNums2] = useState([]);
+  function onNumClick(value, variant, setValue) {
+    const selected = variant === 1 ? selectedNums1 : selectedNums2;
+    const max = variant === 1 ? FIRST_SELECTED_MAX : SECOND_SELECTED_MAX;
+    const idx = selected.findIndex(s => s === value);
+    if (idx === -1 && selected.length < max) {
+      setValue([...selected, value]);
+    } else {
+      const newSelected = selected.filter(s => s !== value);
+      setValue(newSelected);
+    };
+  };
   return (
     <Container>
       <LottoContainer>
@@ -59,12 +77,20 @@ const Main = () => {
           Первая часть поля
         </Subtitle>
         Выберите 8 чисел
-        <Numbers num={19} />
+        <Numbers
+          num={FIRST_ARRAY}
+          selected={selectedNums1}
+          onClick={(value) => onNumClick(value, 1, setSelectedNums1)}
+        />
         <Subtitle>
           Вторая часть поля
         </Subtitle>
         Выберите 1 число
-        <Numbers num={4} />
+        <Numbers
+          num={SECOND_ARRAY}
+          selected={selectedNums2}
+          onClick={(value) => onNumClick(value, 2, setSelectedNums2)}
+        />
       </LottoContainer>
     </Container>
     

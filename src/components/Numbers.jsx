@@ -3,17 +3,14 @@ import styled from '@emotion/styled';
 
 const NumContainer = styled.div`
   display: inline-block;
+  cursor: pointer;
   width: 40px;
   height: 40px;
-  background: #FFFFFF;
-  border: 1px solid #DDDDDD;
+  background: ${(props) => props.active ? '#FFD205' : '#FFFFFF'};
+  border: ${(props) => props.active ? 'none' : '1px solid #DDDDDD'};
   box-sizing: border-box;
   border-radius: 5px;
-`;
-
-const Num = styled.div`
-  position: relative;
-  top: 10px;
+  padding: 10px;
 `;
 
 const Nums = styled.div`
@@ -21,14 +18,12 @@ const Nums = styled.div`
 `;
 
 const Numbers = (props) => {
-  const { num } = props;
+  const { num, selected, onClick } = props;
   let numsArr = [];
   for (let i = 0; i < num; i++) {
     numsArr.push(
-      <NumContainer active={false}>
-        <Num>
-          {i + 1}
-        </Num>
+      <NumContainer active={selected.find(s => s === (i + 1))} onClick={(e) => onClick(e.target.innerHTML * 1)}>
+        {i + 1}
       </NumContainer>
     );
   }
