@@ -124,6 +124,8 @@ const Main = () => {
   }, [selectedNums1, selectedNums2]);
 
   let a = 0;
+
+  // код отправляет 3 запроса подряд с разницей в 2 секунды
   function onSubmit(){
     a++;
     const networkPromise = fetch('https://jsonplaceholder.typicode.com/todos/1', {
