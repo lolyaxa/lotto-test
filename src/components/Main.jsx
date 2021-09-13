@@ -124,7 +124,7 @@ const Main = () => {
   }, [selectedNums1, selectedNums2]);
 
   let a = 0;
-  function callme(){
+  function onSubmit(){
     a++;
     const networkPromise = fetch('https://jsonplaceholder.typicode.com/todos/1', {
       method: 'POST',
@@ -148,7 +148,7 @@ const Main = () => {
     Promise.all(
     [networkPromise, timeOutPromise]).then(() => {
       if (a < POLLING_REQUEST_LIMIT) {
-        callme();
+        onSubmit();
       }
     });
   }
@@ -189,7 +189,7 @@ const Main = () => {
           show={isValid}
           onClick={() => {
             setIsSubmitted(true);
-            callme();
+            onSubmit();
         }}>
           Проверить билет!
         </Button>
