@@ -8,8 +8,7 @@ const Notification = styled.div`
   padding: 10px;
 `;
 
-const NotificationPopup = (props) => {
-  const { show, isWinner } = props;
+const NotificationPopup = ({ show, isWinner }) => {
 	const text = isWinner ? 'Поздравляем, вы выиграли!' : 'К сожалению, вы проиграли :( в другой раз точно повезёт!';
 	if (show) {
 		return (
@@ -18,7 +17,7 @@ const NotificationPopup = (props) => {
 			</Notification>
 		)
 	}
-	return <div />;
+	return null;
 }
 
 export default NotificationPopup;

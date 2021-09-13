@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from '@emotion/styled';
 import Numbers from './Numbers';
 import NotificationPopup from './NotificationPopup';
 import wand from '../wand.svg';
+import GenericErrorPopup from './GenericErrorPopup';
 
 // максимальное кол-во выбранных чисел
 const FIRST_SELECTED_MAX = 8;
@@ -10,6 +11,9 @@ const SECOND_SELECTED_MAX = 1;
 // сколько всего чисел
 const FIRST_ARRAY_LENGTH = 19;
 const SECOND_ARRAY_LENGTH = 4;
+
+const POLLING_INTERVAL = 2000;
+const POLLING_REQUEST_LIMIT = 3;
 
 const Container = styled.div`
   background: #992667;
@@ -93,10 +97,12 @@ const Main = () => {
   const [selectedNums1, setSelectedNums1] = useState([]);
   const [selectedNums2, setSelectedNums2] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [genericError, setGenericError] = useState(false);
 
-  function onNumClick(value, variant, setValue) {
+  function onNumClick(value, variant) {
     const selected = variant === 1 ? selectedNums1 : selectedNums2;
     const max = variant === 1 ? FIRST_SELECTED_MAX : SECOND_SELECTED_MAX;
+    const setValue = variant === 1 ? setSelectedNums1 : setSelectedNums2;
     const idx = selected.findIndex(s => s === value);
     // если ещё можно добавлять числа, добавляем, а
     // при повторном нажатии удаляем
@@ -108,42 +114,44 @@ const Main = () => {
     }
   }
 
-  function isValid() {
-    return selectedNums1.length === FIRST_SELECTED_MAX && selectedNums2.length === SECOND_SELECTED_MAX;
-  }
+  const isValid = useMemo(() => selectedNums1.length === FIRST_SELECTED_MAX && selectedNums2.length === SECOND_SELECTED_MAX, [selectedNums1.length, selectedNums2.length]);
 
-  function isWinner() {
+  const isWinner = useMemo(() => {
     // кол-во вхождений чисел из выигрышного массива в массив выбранных чисел
     const matches1 = selectedNums1.filter(s => winningNums1.includes(s)).length;
     const matches2 = selectedNums2.filter(s => winningNums2.includes(s)).length;
     return matches1 >= 4 || (matches1 >= 3 && matches2 === 1)
-  }
+  }, [selectedNums1, selectedNums2]);
 
-  useEffect(() => {
-    if (isSubmitted) {
-      // eslint-disable-next-line no-inner-declarations
-      async function f() {
-      const settings = {
-        method: 'POST',
-        body: {
-          selectedNumber: {
-            firstField: selectedNums1,
-            secondField: selectedNums2,
-          },
-          isTicketWon: isWinner(),
-        }
-      };
-      try {
-        const fetchResponse = await fetch(`http://localhost:3001/`, settings);
-        const data = await fetchResponse.json();
-        return data;
-      } catch (e) {
-        return e;
+  let a = 0;
+  function callme(){
+    a++;
+    const networkPromise = fetch('https://jsonplaceholder.typicode.com/todos/1', {
+      method: 'POST',
+      body: {
+        selectedNumber: {
+          firstField: selectedNums1,
+          secondField: selectedNums2,
+        },
+        isTicketWon: isWinner,
       }
-    }
-    f();
-    }
-  }, [isSubmitted]);
+    }).then(res => {
+      if (res.status !== 200 && a === 3) {
+        setGenericError(true);
+      }
+    });
+
+    const timeOutPromise = new Promise(function(resolve) {
+      setTimeout(resolve, POLLING_INTERVAL);
+    });
+    
+    Promise.all(
+    [networkPromise, timeOutPromise]).then(() => {
+      if (a < POLLING_REQUEST_LIMIT) {
+        callme();
+      }
+    });
+  }
 
   return (
     <Container>
@@ -166,7 +174,7 @@ const Main = () => {
         <Numbers
           num={FIRST_ARRAY_LENGTH}
           selected={selectedNums1}
-          onClick={(value) => onNumClick(value, 1, setSelectedNums1)}
+          onClick={(value) => onNumClick(value, 1)}
         />
         <Subtitle>
           Вторая часть поля
@@ -175,12 +183,18 @@ const Main = () => {
         <Numbers
           num={SECOND_ARRAY_LENGTH}
           selected={selectedNums2}
-          onClick={(value) => onNumClick(value, 2, setSelectedNums2)}
+          onClick={(value) => onNumClick(value, 2)}
         />
-        <Button show={isValid()} onClick={() => setIsSubmitted(true)}>
+        <Button
+          show={isValid}
+          onClick={() => {
+            setIsSubmitted(true);
+            callme();
+        }}>
           Проверить билет!
         </Button>
-        <NotificationPopup show={isSubmitted} isWinner={isWinner()} />
+        <NotificationPopup show={isSubmitted} isWinner={isWinner} />
+        <GenericErrorPopup show={genericError} />
       </LottoContainer>
     </Container>
   )

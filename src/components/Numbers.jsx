@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-const NumContainer = styled.div`
+const Container = styled.div`
   display: inline-block;
   cursor: pointer;
   width: 40px;
   height: 40px;
   background: ${(props) => props.active ? '#FFD205' : '#FFFFFF'};
-  border: ${(props) => props.active ? 'none' : '1px solid #DDDDDD'};
+  border: ${(props) => props.active ? '1px solid transparent' : '1px solid #DDDDDD'};
   box-sizing: border-box;
   border-radius: 5px;
   padding: 10px;
@@ -17,20 +17,31 @@ const Nums = styled.div`
   margin: 10px;
 `;
 
-const Numbers = (props) => {
-  const { num, selected, onClick } = props;
-  let numsArr = [];
-  for (let i = 0; i < num; i++) {
-    numsArr.push(
-      <NumContainer key={i + 1} active={selected.find(s => s === (i + 1))} onClick={(e) => onClick(e.target.innerHTML * 1)}>
-        {i + 1}
-      </NumContainer>
-    );
-  }
+const Numbers = ({ num, selected, onClick }) => {
+  const numsArr = [...Array(num).keys()];
   return (
     <Nums>
-      {numsArr}
+      {numsArr.map(n => {
+        const cellValue = n + 1;
+        return <Cell
+          key={cellValue}
+          active={selected.find(s => s === (cellValue))}
+          onClick={() => onClick(cellValue)}
+          number={cellValue}
+        />
+      })}
     </Nums>
+  )
+}
+
+const Cell = ({ number, active, onClick }) => {
+  return (
+    <Container 
+      active={active}
+      onClick={onClick}
+    >
+      {number}
+    </Container>
   )
 }
 
