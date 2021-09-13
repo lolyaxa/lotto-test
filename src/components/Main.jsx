@@ -136,7 +136,7 @@ const Main = () => {
         isTicketWon: isWinner,
       }
     }).then(res => {
-      if (res.status !== 200 && a === 3) {
+      if (res.status !== 200 && a === POLLING_REQUEST_LIMIT) {
         setGenericError(true);
       }
     });
